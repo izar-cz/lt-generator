@@ -1,0 +1,106 @@
+.dd-header {
+	background: #333;
+	color: #aaa;
+	display: flex;
+	padding: 0 0.3em;
+	a {
+		color: #eee;
+	}
+	> .dd-header-item {
+		
+	}
+}
+.dd-header-main {
+	height: 3em;
+	line-height: 3em;
+	background: #aaa;
+	color: #333;
+}
+.dd-body {
+}
+
+
+
+.dd-section {
+	> .dd-header {
+	}
+}
+
+.dd-item {
+	padding: 1ex;
+	border: 1px outset #666;
+	background: #aaa;
+	color: inherit; // if it is a button
+
+	@minDim: 10em;
+	flex: 1;
+	flex-basis: @minDim;
+	height: @minDim;
+
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	&.dd-item-group::after {
+		content: '▼';
+		margin-left: 1ex;
+		font-size: 80%;
+		opacity: 0.8;
+	}
+}
+.dd-list,
+.dd-grid {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	padding: 0;
+}
+.dd-list {
+	flex-direction: column;
+	> .dd-item {
+		min-height: 5em;
+	}
+}
+
+.dd-modal {
+	@closeButtonDim: 4em;
+	position: fixed;
+	top: 0; right: 0; bottom: 0; left: 0;
+	background: rgba(0,0,0,0.5);
+	padding: 2em;
+	overflow: auto;
+	overflow: overlay; // non-standard value for webkit
+	
+	display: flex;
+	flex-direction: column;
+
+	.dd-modal-body {
+		flex: 1;
+	}
+	.dd-modal-close {
+		margin: 0 0 0 auto; // flex-friendly float: right;
+		background: #fff;
+		display: block;
+		width: 1em;
+		height: 1em;
+		text-align: center;
+		line-height: 1em;
+		font-size: @closeButtonDim;
+	}
+	h2 {
+		margin-top: 0;
+	}
+	@media all and (min-width: 500px) {
+		flex-direction: row-reverse;
+		padding: 3em;
+	}
+}
+body.dd-modalopen {
+	overflow: hidden;
+	position: fixed;
+}
+.dd-card {
+	background: #fff;
+	padding: 2em;
+	min-height: 50vh;
+}
