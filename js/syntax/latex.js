@@ -29,16 +29,20 @@ export class SyntaxLatex extends Syntax {
 }
 
 export function typesetCard(card) {
-	return new CardGenerator(card).typeset();
+	return card.deck === 'location'
+		? new LocationCardGenerator(card).typeset()
+		: new CardGenerator(card).typeset();
 }
 class CardGenerator {
 	constructor(card, options) {
 		this.card = card;
 	}
-	typeset() {
-		var imageName = this.card.imageName
+	imageName(card) {
+		return card.imageName
 			.normalize('NFD').replace(/[\u0300-\u036f]/g, "")  // remove diacritics
 			.toLowerCase().replace(/[^a-z]+/g, "_");           // convert to snake_case
+	}
+	typeset() {
 		var cardClass = this.card.class;
 		if ('Neutral' === cardClass) {
 			cardClass = (
@@ -52,13 +56,12 @@ class CardGenerator {
 			if (t.startsWith('cursed') || t.startsWith('proklet')) cardClass = 'EquipmentCursed'
 		}
 
-		var result = [`\\begin{card}{${this.card.deck}}{${cardClass}}{${imageName}}`]
-//		var result = [`\\begin{card}{${cardClass}}{${imageName}}`]
+		var result = [`\\begin{card}{${this.card.deck}}{${cardClass}}{${this.imageName(this.card)}}`]
 		result.push(`\\cardName{${this.card.name}}`);
 		if (this.card.race) {
 			result.push(`\\cardRace{${this.card.race}}`);
 		} else if (this.card.type) {
-			result.push(`\\cardRace{${this.card.type}}`); // TODO ?
+			result.push(`\\cardType{${this.card.type}}`);
 		}
 		if (this.card.hp) {
 			result.push(`\\cardHP{${this.card.hp}}`);
@@ -68,7 +71,7 @@ class CardGenerator {
 		} else {
 			result.push(`\\cardText{${this.typesetText(this.card.ability)}}`);
 		}
-		return `${result.join(`%\n\t`)}%\n\\end{card}%\n`;
+		return `${result.join(`%\n\t`)}%\n\\end{card}%\n\\cardBack{${this.card.deck}}%\n`;
 	}
 	typesetText(text) {
 		var paragraphs = [];
@@ -82,4 +85,31 @@ class CardGenerator {
 	}
 }
 
+class LocationCardGenerator extends CardGenerator {
+	typeset() {
+		let result = this.typesetLocationCard(this.card);
+		if (this.card.back) {
+			result += this.typesetLocationCard(this.card.back);
+		} else {
+			result += `\\locationCardBack{}%\n`;
+		}
+		return result;
+	}
+	typesetLocationCard(card) {
+		const result = [
+			`\\begin{locationCard}{${this.imageName(card)}}`,
+			`\\locationName{${card.name}}`
+		];
+		for (let die of card.dice) {
+			result.push(`\\locationDice{${die}}`);
+		}
+		for (let bonus of card.bonus) {
+			result.push(`\\locationBonus{${bonus}}`);
+		}
+		for (let extra of card.extra || []) {
+			result.push(`\\locationExtra{${extra}}`);
+		}
+		return `${result.join(`%\n\t`)}%\n\\end{locationCard}%\n`;
+	}
+}
 

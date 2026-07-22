@@ -2,7 +2,7 @@
 import {Fetcher} from './js/fetcher.js';
 import {WikiCardParser, WikiPageListParser} from './js/parser.js';
 import {SyntaxLatex, typesetCard} from './js/syntax/latex.js';
-
+import {locationsDeck} from './js/locations.js';
 
 
 
@@ -132,6 +132,7 @@ class PrintGenerator {
 	});
 
 	var decks = parser.getDecks();
+	decks['location'] = locationsDeck(lang);
 	console.log(decks);
 
 	var controller = new PrintGenerator({
