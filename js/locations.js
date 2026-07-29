@@ -30,9 +30,9 @@ const locations = [{
 	imageName: 'chram',
 	name: {cs:"Chrám", en:"Temple"},
 	dice: [6],
-	bonus: ['Divine', 'Deenchant', 'Corrupt'],
+	bonus: ['Divine', 'Deenchant'],
 	back: {
-		imageName: 'chram',
+		imageName: 'znesvecenyChram',
 		name: {cs:"Znesvěcený Chrám", en:"Corrupted Temple"},
 		dice: [7, 6],
 		bonus: ['Divine'],
