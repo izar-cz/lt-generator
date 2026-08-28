@@ -1,7 +1,8 @@
 
 import {Fetcher} from './js/fetcher.js';
 import {WikiCardParser, WikiPageListParser} from './js/parser.js';
-import {SyntaxLatex, typesetCard} from './js/syntax/latex.js';
+import {SyntaxLatex} from './js/syntax/latex.js';
+import {SyntaxMarkdown} from './js/syntax/markdown.js';
 import {locationsDeck} from './js/locations.js';
 
 
@@ -44,6 +45,9 @@ class PrintGenerator {
 // 	}
 	
 	typesetCards(decks, selection) {
+		const typesetCard = (card) => {
+			return this._cfg.typesetCard(card, this._cfg.lang);
+		};
 		var cardsFront = [];
 		var cardsBack = [];
 		selection.forEach(deckName => {
@@ -84,12 +88,11 @@ class PrintGenerator {
 	
 }
 
-
-+async function(lang){
+const params = new URLSearchParams(window.location.search);
++async function(lang, format){
 	var fetcher = new Fetcher('http://lt.izar.cz/');
-	var parser = new WikiCardParser({
-		syntax: new SyntaxLatex(),
-	});
+	const SyntaxClass = {'md': SyntaxMarkdown, 'tex': SyntaxLatex}[format];
+	var parser = new WikiCardParser({syntax: new SyntaxClass()});
 
 	var config = {'cs': {
 		"neutralni_postavy": {deck: "Character", class: "Neutral"}, // Translates to "LongNeutral" or "ShortNeutral" in syntax/latex.js
@@ -141,11 +144,10 @@ class PrintGenerator {
 		resultEl: document.getElementById('latex'),
 		formEl: document.querySelector('.col-setting'),
 		selectEl: document.querySelector('.col-setting ul'),
+		typesetCard: SyntaxClass.typesetCard,
+		lang: lang,
 	});
 	
 	controller.tool_selectAll();
 	controller.tool_submit();
-}(new URLSearchParams(window.location.search).get('lang') || 'cs');
-
-
-
+}(params.get('lang') || 'cs', params.get('format') || 'tex');

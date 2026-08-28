@@ -25,7 +25,6 @@ const locations = [{
 	name: {cs:"Kovárna", en:"Blacksmith"},
 	dice: [4],
 	bonus: ['Combat'],
-	extra: ['']
 },{
 	imageName: 'chram',
 	name: {cs:"Chrám", en:"Temple"},

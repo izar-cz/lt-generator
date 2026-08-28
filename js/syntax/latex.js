@@ -26,13 +26,13 @@ export class SyntaxLatex extends Syntax {
 	renderMark(mark) {
 		return getIcon(mark);
 	}
+	static typesetCard(card) {
+		return card.deck === 'location'
+			? new LocationCardGenerator(card).typeset()
+			: new CardGenerator(card).typeset();
+	}
 }
 
-export function typesetCard(card) {
-	return card.deck === 'location'
-		? new LocationCardGenerator(card).typeset()
-		: new CardGenerator(card).typeset();
-}
 class CardGenerator {
 	constructor(card, options) {
 		this.card = card;
@@ -69,19 +69,17 @@ class CardGenerator {
 		if (this.card.goal) {
 			result.push(`\\cardDoubleText{${this.typesetText(this.card.ability)}}{${this.typesetText(this.card.goal)}}`);
 		} else {
-			result.push(`\\cardText{${this.typesetText(this.card.ability)}}`);
+			result.push(`\\cardText{%\n${this.typesetText(this.card.ability)}}`);
 		}
 		return `${result.join(`%\n\t`)}%\n\\end{card}%\n\\cardBack{${this.card.deck}}%\n`;
 	}
 	typesetText(text) {
-		var paragraphs = [];
 		var shortLinesThreshold = 0; // This was 12;
-		text = text.replace("\t", '\\hspace{0.5em}\\textbullet{} ');
+		text = text.trim().replace("\t", '\\hspace{0.5em}\\textbullet{} ');
 		let replacedTextLength = text.replace(/(\\[a-zA-Z]+(?:{[^}]*})?)/g, 'x').length;
-		paragraphs.push(replacedTextLength > shortLinesThreshold
+		return (replacedTextLength > shortLinesThreshold)
 			? text
-			: `\\begin{center}{\\large ${text}}\\end{center}`)
-		return paragraphs.join('\\par\\smallskip{}');
+			: `\\begin{center}{\\large ${text}}\\end{center}`
 	}
 }
 
