@@ -42,10 +42,13 @@ const locations = [{
 export function locationsDeck(lang)
 {
 	let cards = [];
+	function localizeName(location) {
+		return {...location, name: location.name[lang]};
+	}
 	for (let location of locations) {
-		let card = {...location, name: location.name[lang]};
-		if (location.back) {
-			location.back = {...location.back, name: location.back.name[lang]};
+		let card = localizeName(location);
+		if (card.back) {
+			card.back = localizeName(card.back);
 		}
 		card.deck = 'location';
 		cards.push(card);

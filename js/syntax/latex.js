@@ -5,6 +5,9 @@ import {Syntax} from '../parser.js';
 function getIcon(name) {
 	return `((${name}))`;
 }
+function capitalize(text) {
+	return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
 export class SyntaxLatex extends Syntax {
 	fromDokuwiki(text) {
@@ -59,17 +62,17 @@ class CardGenerator {
 		var result = [`\\begin{card}{${this.card.deck}}{${cardClass}}{${this.imageName(this.card)}}`]
 		result.push(`\\cardName{${this.card.name}}`);
 		if (this.card.race) {
-			result.push(`\\cardRace{${this.card.race}}`);
+			result.push(`\\cardRace{${capitalize(this.card.race)}}`);
 		} else if (this.card.type) {
-			result.push(`\\cardType{${this.card.type}}`);
+			result.push(`\\cardType{${capitalize(this.card.type)}}`);
 		}
 		if (this.card.hp) {
 			result.push(`\\cardHP{${this.card.hp}}`);
 		}
 		if (this.card.goal) {
-			result.push(`\\cardDoubleText{${this.typesetText(this.card.ability)}}{${this.typesetText(this.card.goal)}}`);
+			result.push(`\\cardDoubleText{%\n${this.typesetText(this.card.ability)}%\n}{%\n${this.typesetText(this.card.goal)}%\n}`);
 		} else {
-			result.push(`\\cardText{%\n${this.typesetText(this.card.ability)}}`);
+			result.push(`\\cardText{%\n${this.typesetText(this.card.ability)}%\n}`);
 		}
 		return `${result.join(`%\n\t`)}%\n\\end{card}%\n\\cardBack{${this.card.deck}}%\n`;
 	}
