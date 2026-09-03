@@ -48,16 +48,16 @@ const deckDict = {
 		"move roll": "hod na přesun",
 		"entry bonus": "vstupní bonus",
 		"or": "nebo",
-		"Deenchant": "„Odmodlení“ – zruš libovolné okouzlení nebo znič jedno vlastní prokleté vybavení.",
-		"Divine": "Lízni si Svatou kartu",
-		"Combat": "Lízni si Bojovou kartu",
-		"Sorcery": "Lízni si Magickou kartu",
-		"Steal": "Krádež – vezmi si jednu kartu vybavení libovolné postavy.",
-		"Brawl": "Opilecká rvačka – Přesuň sebe a libovolnou jinou postavu na pole hospoda. Oběma je uděleno 1 fyzické zranění. Tím končí tvůj tah.",
+		"BonusDeenchant": "„Odmodlení“ – zruš libovolné okouzlení nebo znič jedno vlastní prokleté vybavení.",
+		"BonusDivine": "Lízni si Svatou kartu",
+		"BonusCombat": "Lízni si Bojovou kartu",
+		"BonusSorcery": "Lízni si Magickou kartu",
+		"BonusSteal": "Krádež – vezmi si jednu kartu vybavení libovolné postavy.",
+		"BonusBrawl": "Opilecká rvačka – Přesuň sebe a libovolnou jinou postavu na pole hospoda. Oběma je uděleno 1 fyzické zranění. Tím končí tvůj tah.",
 		"corruptedDamage": "Při vstupu je ti způsobeno 1 zranění, pokud nejsi nemrtvý",
 		"orcAttack": "Postavy rasy skřet mají bonus k útoku +1",
-		"Damage2": "Uděl libovolné postavě 2 magická zranění",
-		"Heal": "Vyléč libovolné postavě 1 zranění",
+		"BonusDamage2": "Uděl libovolné postavě 2 magická zranění",
+		"BonusHeal": "Vyléč libovolné postavě 1 život",
 		"elfDefense": "Postavy rasy elf mají bonus k obraně +1",
 	},
 	en:{
@@ -70,16 +70,16 @@ const deckDict = {
 		"Undead": "Undead",
 		"Neutral": "Neutral characters",
 		// location cards:
-		"Deenchant": "„Prayer“ – discard any enchantment or destroy one of your own cursed equipment.",
-		"Divine": "Draw a Divine card",
-		"Combat": "Draw a Combat card",
-		"Sorcery": "Draw a Sorcery card",
-		"Steal": "Thievery – take one equipment card from any character.",
-		"Brawl": "Drunken fistfight – move yourself and any other character to the tavern. Both players take 1 physical damage. This ends your turn.",
+		"BonusDeenchant": "„Prayer“ – discard any enchantment or destroy one of your own cursed equipment.",
+		"BonusDivine": "Draw a Divine card",
+		"BonusCombat": "Draw a Combat card",
+		"BonusSorcery": "Draw a Sorcery card",
+		"BonusSteal": "Thievery – take one equipment card from any character.",
+		"BonusBrawl": "Drunken fistfight – move yourself and any other character to the tavern. Both players take 1 physical damage. This ends your turn.",
 		"corruptedDamage": "On entry you take 1 damage unless you are undead",
 		"orcAttack": "Orc characters have +1 attack bonus",
-		"Damage2": "Deal 2 magic damage to any character",
-		"Heal": "Heal any character for 1 damage",
+		"BonusDamage2": "Deal 2 magic damage to any character",
+		"BonusHeal": "Heal any character for 1 hitpoint",
 		"elfDefense": "Elves have +1 defense bonus",
 	}
 }
@@ -133,7 +133,7 @@ class LocationCardGenerator extends CardGenerator {
 		const result = [`## ${this._('location')}: ${card.name}`,''];
 		result.push(`* ${this._('move roll')}: ${card.dice.join(` ${this._('or')} `)}`);
 		for (let bonus of card.bonus) {
-			result.push(`* ${this._('entry bonus')}: ${this._(bonus)}`);
+			result.push(`* ${this._('entry bonus')}: ${this._('Bonus'+bonus)}`);
 		}
 		for (let extra of card.extra || []) {
 			result.push(`* ${this._(extra)}`);
