@@ -36,6 +36,7 @@ export class SyntaxLatex extends Syntax {
 	}
 }
 
+const NEWLINE = '\\cardNewline';
 class CardGenerator {
 	constructor(card, options) {
 		this.card = card;
@@ -70,19 +71,59 @@ class CardGenerator {
 			result.push(`\\cardHP{${this.card.hp}}`);
 		}
 		if (this.card.goal) {
-			result.push(`\\cardDoubleText{%\n${this.typesetText(this.card.ability)}%\n}{%\n${this.typesetText(this.card.goal)}%\n}`);
+			result.push(`\\cardDoubleText{%\n${
+					this.typesetTextCondensed(this.card.ability)
+				}%\n}{%\n${
+					this.typesetTextCondensed(this.card.goal)
+				}%\n}`);
 		} else {
 			result.push(`\\cardText{%\n${this.typesetText(this.card.ability)}%\n}`);
 		}
 		return `${result.join(`%\n\t`)}%\n\\end{card}%\n\\cardBack{${this.card.deck}}%\n`;
 	}
 	typesetText(text) {
-		var shortLinesThreshold = 0; // This was 12;
-		text = text.trim().replace("\t", '\\hspace{0.5em}\\textbullet{} ');
-		let replacedTextLength = text.replace(/(\\[a-zA-Z]+(?:{[^}]*})?)/g, 'x').length;
-		return (replacedTextLength > shortLinesThreshold)
-			? text
-			: `\\begin{center}{\\large ${text}}\\end{center}`
+		const THRESHOLD_SHORTLINE = 26;
+		const THRESHOLD_SPACING_ALL = 50;
+		const THRESHOLD_SPACING_1 = 106;
+
+		let result = [];
+		const pars = this._pars(text);
+		const parLens = pars.map(p => p.replace(/(\\[a-zA-Z]+(?:{[^}]*})?)/g, 'x').length);
+		const totalLength = parLens.reduce((a, b) => a + b, 0);
+
+		if (parLens[0] < THRESHOLD_SHORTLINE) { // if the first paragraph is short, center the text
+			pars[0] = `\\shortLine{${pars[0]}}`;
+			if (pars.length === 1) {
+				pars.push(''); // workaround: \shortLine doesn't work properly if it is the last line.
+			}
+		}
+
+		if (totalLength < THRESHOLD_SHORTLINE) { // single short line, put an extra vertical space before it
+			result.push('');
+		}
+		if (totalLength < THRESHOLD_SPACING_ALL) {
+			for (let i = 0; i < pars.length; i++) {
+				result.push('');
+				result.push(pars[i]);
+			}
+		} else {
+			if (totalLength < THRESHOLD_SPACING_1) {
+				result.push('');
+			}
+			result.push(...pars);
+		}
+
+		// text = text.trim().replace("\t", '\\hspace{0.5em}\\textbullet{} ');
+		return this._combinePars(result);
+	}
+	typesetTextCondensed(text) {
+		return this._combinePars(this._pars(text));
+	}
+	_pars(text) {
+		return text.trim().split(/\n{2,}/g).map(p => p.trim()).filter(p => p.length > 0);
+	}
+	_combinePars(pars) {
+		return pars.join(`%\n${NEWLINE}%\n`); //+NEWLINE;
 	}
 }
 
