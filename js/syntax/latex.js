@@ -50,7 +50,7 @@ class CardGenerator {
 		var cardClass = this.card.class;
 		if ('Neutral' === cardClass) {
 			cardClass = (
-				(this.card.ability.length + this.card.goal.length) > 125
+				(this.card.ability.length + this.card.goal.length) > 135
 				? 'Short'
 				: 'Long'
 			) + cardClass
